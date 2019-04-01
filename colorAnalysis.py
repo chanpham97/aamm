@@ -11,7 +11,6 @@ class ColorAnalysis:
         if outputImage:
             imageOut = image.copy()
             self.bucketer.reset_bias()
-            print(self.bucketer.BIAS, self.bucketer.color_bases_bgr['white'], self.bucketer.color_bases_bgr['black'])
 
         histogram = dict.fromkeys(self.bucketer.color_bases_bgr.keys(), 0)
         rows, cols, depth = image.shape
@@ -22,7 +21,7 @@ class ColorAnalysis:
                 if outputImage:
                     imageOut[r, c] = self.bucketer.color_bases_bgr[color]
         total = float(sum(histogram.values()))
-        # print(total)
+
         h2 = {}
         valid = []
         for color in histogram:
@@ -39,22 +38,30 @@ class ColorAnalysis:
         brightness = img_bnw.mean()/255.0 * 100
         return brightness
 
+    
+    def hue_breakdown(self, img):
+        histogram = dict.fromkeys(['red', 'yellow', 'green', 'cyan', 'blue', 'magenta'], 0)
+        rows, cols, depth = image.shape
+        for r in range(rows):
+            for c in range(cols):
+                histogram[self.bucketer.bucket_color(image[r, c])] += 1
+
 
 def main():
     a = ColorAnalysis()
-
+    
     img_bgr = cv.imread(sys.argv[1], cv.IMREAD_COLOR) #default BGR
     
     colBreakdown, colPresent, imgOut = a.colorBreakdown(img_bgr, True) 
     print(colBreakdown)
     cv.imshow('imageIn', img_bgr)
     cv.imshow('imageOut', imgOut)
-
-    # cv.imshow("bnw", img_bnw)
     cv.waitKey(0)
+    # cv.imshow("bnw", img_bnw)
     try:
-        save = raw_input("To save, input file name. Else, press enter.\n")
-        cv.imwrite(save, imgOut)
+        save = raw_input("To save, input file name. Else, type 'n': ")
+        if save:
+            cv.imwrite(save, imgOut)
     except (EOFError, ValueError):
         pass
         
@@ -62,7 +69,6 @@ def main():
     # print(a.brightness_bgr(img_bgr))
 
     # img_hsv = cv.cvtColor(img_bgr, cv.COLOR_BGR2HSV)
-
 
 
 main()
