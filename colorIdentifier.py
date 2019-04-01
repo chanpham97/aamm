@@ -6,8 +6,10 @@ sources: https://www.compuphase.com/cmetric.htm
 '''
 class ColorBucketer:
     def __init__(self):
-        #assumes bgr
-        self.color_bases = {
+        self.BIAS = 0 # so only very white or very black colors identified as black
+        self.MAX_DISTANCE = sqrt(255**2 + 255**2 + 255**2)
+
+        self.color_bases_bgr = {
            'red': [0, 0, 255],
            'green': [0, 255, 0],
            'blue': [255, 0, 0],
@@ -15,9 +17,19 @@ class ColorBucketer:
            'pink': [255, 0, 255],
            'white': [255, 255, 255],
            'black': [0, 0, 0]
-           #'light-blue': [0, 255, 255] #potentially remove later
         }
-        self.MAX_DISTANCE = sqrt(255**2 + 255**2 + 255**2)
+
+
+    def set_bias(self, val=30):
+        self.BIAS = val
+        self.color_bases_bgr['white'] = [255 + self.BIAS, 255 + self.BIAS, 255 + self.BIAS]
+        self.color_bases_bgr['black'] = [0 - self.BIAS, 0 - self.BIAS, 0 - self.BIAS]
+
+
+    def reset_bias(self):
+        self.BIAS = 0
+        self.color_bases_bgr['white'] = [255, 255, 255]
+        self.color_bases_bgr['black'] = [0, 0, 0]
 
 
     def d(self, c1, c2):
@@ -33,13 +45,15 @@ class ColorBucketer:
 
 
     def bucket_color(self, color_in):
+        self.set_bias()
         min_color = ''
         min_distance = self.MAX_DISTANCE
-        for cb in self.color_bases:
-            color_base = self.color_bases[cb]
+        for cb in self.color_bases_bgr:
+            color_base = self.color_bases_bgr[cb]
             if self.d(color_base, color_in) <= min_distance:
                 min_color = cb
                 min_distance = self.d(color_base, color_in)
+        self.reset_bias()
         return min_color
 
 
@@ -48,5 +62,5 @@ def main():
     input_col = [int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])]
     col = b.bucket_color(input_col)
     print(col)
-    print(b.d(input_col, b.color_bases[sys.argv[4]]), b.d(input_col, b.color_bases[col]))
+    print(b.d(input_col, b.color_bases_bgr[sys.argv[4]]), b.d(input_col, b.color_bases_bgr[col]))
   
