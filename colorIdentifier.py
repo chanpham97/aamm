@@ -43,14 +43,10 @@ class ColorBucketer:
         return min_color
 
 
-    def main(self):
-        b = ColorBucketer()
-        input_col = [int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])]
-        col = b.bucket_color(input_col)
-        print(col)
-        print(b.d(input_col, b.color_bases[sys.argv[4]]), b.d(input_col, b.color_bases[col]))
+def main():
+    b = ColorBucketer()
+    input_col = [int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])]
+    col = b.bucket_color(input_col)
+    print(col)
+    print(b.d(input_col, b.color_bases[sys.argv[4]]), b.d(input_col, b.color_bases[col]))
   
-  
-    # def show_colormap(self):
-
-
