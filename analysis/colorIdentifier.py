@@ -85,7 +85,6 @@ class ColorBucketer:
         # if v <= self.BLACK_V_MAX:
         #     return 'black'
         return None
-        
 
 def main():
     b = ColorBucketer()
