@@ -13,21 +13,25 @@
 <body>
     <!-- <h1>wahoo hi</h1> -->
     <nav class="navbar navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/">
             AAMM
         </a>
     </nav>
     <div id="wrapper">
-        <a href="#" class="previous">&#8249;</a>
+        <a href="/" class="previous">&#8249;</a>
         <div class="card">
-            <img id="painting" src="{{ painting_url }}"/>
-                    <!-- <h5 class="card-title">Glass Painting with the Sun (Small Pleasures)</h5>
-                    <p class="card-text">Wassily Kandinsky</p> -->
+            <div class="img-wrapper">
+                <img id="painting" class="card-img" src="{{ painting_path }}"/>
+                <div class="card-img-overlay">
+                    <h5 class="card-title">{{ title }}</h5>
+                    <p class="card-text">{{ artist }}</p>
+                </div>
+            </div>
             <div class="card-body">
                 <iframe src="{{ track_url }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
             </div>
         </div>
-        <a href="#" class="next">&#8250;</a>
+        <a href="/" class="next">&#8250;</a>
     </div>
     <div id="player">
     </div>

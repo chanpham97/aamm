@@ -1,6 +1,10 @@
 body {
-    font-family: sans-serif; 
+    font-family: Helvetica Neue; 
     width: 100%;
+}
+
+.img-wrapper {
+    position: relative
 }
 
 #wrapper {
@@ -11,6 +15,20 @@ body {
     height:auto;
     margin-top: 5vh;
     margin-bottom: 5vh;
+}
+
+.card-img-overlay {
+    display: none;
+    color: #f1f1f1;
+    background: #343A40;
+    opacity: 0.7;
+    text-align: center;
+    height: 100%;
+    position: absolute;
+}
+
+.img-wrapper:hover .card-img-overlay {
+    display: block;
 }
 
 #player {
@@ -27,7 +45,7 @@ body {
     display:flex;
     justify-content: center;
     align-items: center;
-    background: #040404;
+    background: #343A40;
 }
 
   
