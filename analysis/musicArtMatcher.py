@@ -23,7 +23,7 @@ class MusicArtMatcher:
     def match(self,  file_path, art_filename, track_list):
         img_bgr = cv.imread(file_path + art_filename, cv.IMREAD_COLOR)
         if img_bgr is None:
-            print "not read"
+            print("not read")
             return
         img_bgr = colorAnalysis.resize_image(img_bgr, self.max_val) if self.max_val else colorAnalysis.resize_image(img_bgr)
         color_sentiment, scaled_num_colors, scaled_brightness = (colorAnalysis.get_scaled_values(img_bgr))
@@ -56,7 +56,7 @@ class MusicArtMatcher:
             
             
     def convert_art_to_music_vector(self, color_sentiment, scaled_num_colors, scaled_brightness):
-        key = 1 if color_sentiment < 0 else 10
+        key = 1 if color_sentiment < 5 else 10
         tempo = scaled_num_colors
         #loudness = num_colors
         energy = scaled_brightness
