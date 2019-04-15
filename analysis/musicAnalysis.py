@@ -22,17 +22,17 @@ class MusicAnalyzer:
         
     def scale_loudness(self, energy):
         if energy <= -25:
-            return -1 # low energy
+            return -1 # low vol
         if energy >= 13:
-            return 1 # high energy
+            return 1 # high vol
         else:
             return 0
     
     def scale_tempo(self, energy):
         if energy <= 40:
-            return -1 # low energy
+            return -1 # low speed
         if energy >= 80:
-            return 1 # high energy
+            return 1 # high speed
         else:
             return 0
         
@@ -58,7 +58,7 @@ class MusicAnalyzer:
         if annotation:
             print("Annotation:", annotation)
             
-        return self.scale_energy(entry["energy"]), self.scale_loudness(entry["loudness"]), self.scale_tempo(entry["tempo"]), entry["mode"]
+        return self.scale_energy(entry["energy"]), self.scale_tempo(entry["tempo"]), entry["mode"]
     
 def __main__():
     music_matcher = MusicAnalyzer(config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET)

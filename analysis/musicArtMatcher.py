@@ -32,11 +32,12 @@ class MusicArtMatcher:
         closest_track_tid = ""
         closest_distance = sys.maxsize
         for track in track_list:
-            energy_loudness_tempo_key = musicAnalyzer.get_scaled_track_features(track)
-            dist = distance.euclidean(target_music_vector, energy_loudness_tempo_key)
-            #print(target_music_vector)
-            #print(energy_loudness_tempo_key)
-            #print(dist)
+            energy_tempo_key = musicAnalyzer.get_scaled_track_features(track)
+            dist = distance.euclidean(target_music_vector, energy_tempo_key)
+            print()
+            print("target vactor: ", target_music_vector)
+            print("track vector: ", energy_tempo_key)
+            print("distance: ", dist)
             if dist < closest_distance:
                 closest_distance = dist
                 closest_track_tid = track
@@ -50,9 +51,9 @@ class MusicArtMatcher:
         if color_sentiment < 0:
              key = 0
         tempo = num_colors
-        loudness = num_colors
+        #loudness = num_colors
         energy = brightness
-        return energy, loudness, tempo, key
+        return energy, tempo, key
         
 def __main__():
     

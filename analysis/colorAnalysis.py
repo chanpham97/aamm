@@ -142,7 +142,7 @@ def get_scaled_num_colors(colors):
     num_colors = len(colors)
     if num_colors >= 6:
         return 1
-    if num_colors <= 3:
+    if num_colors <= 2:
         return -1
     else:
         return 0
