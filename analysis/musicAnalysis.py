@@ -55,10 +55,11 @@ class MusicAnalyzer:
         #print ("analysis retrieved in %.2f seconds" % (delta,))
         
         entry = json_features[0]
+        print('energy, tempo, mode')
         print(tid, entry["energy"], entry["tempo"], entry["mode"])
         
-        if annotation:
-            print("Annotation:", annotation)
+        # if annotation:
+        #     print("Annotation:", annotation)
         
         scaled_mode = 1 if entry["mode"] == 0 else 10
         return self.scale_energy(entry["energy"]), self.scale_tempo(entry["tempo"]), scaled_mode

@@ -7,41 +7,67 @@ import config
 
 app = Flask(__name__)
 
+painting_index = 0
+paintings_order = ["1.jpg",  "10.jpg", "9.jpg", "4.jpg", "6.jpg", "7.jpg", "13.jpg", "11.jpg", "5.jpg", "12.jpg",  "2.jpg", "8.jpg"]
 paintings_dict = {
-        "0.jpg": ["Painting with red spot", "Wassily Kandinsky", "1914"],
+        # "0.jpg": ["Painting with red spot", "Wassily Kandinsky", "1914"], # mismatch?
         "1.jpg": ["Lausanne Abstract", "Francis Picabia", "1918"],
         "2.jpg": ["Glass Painting with the Sun (Small Pleasures)", "Wassily Kandinsky", "1910"],
-        "3.jpg": ["Bild no. 84", "Jacoba van Heemskerck", "1918"],
-        "4.jpg": ["Spring", "David Burliuk", "1907"],
-        "5.jpg": ["The Mahatmas Present Standing Point, Series II, No. 2a", "Hilma af Klint", "1920"],
-        "6.jpg": ["Landscape", "Arthur Beecher Carles", "1910"],
-        "7.jpg": ["Abstract Painting", "Vanessa Bell", "1914"],
-        "8.jpg": ["The Yellow Curtain", "Henri Matisse", "1915"],
-        "9.jpg": ["Variation", "Alexej von Jawlensky", "1918"],
-        "10.jpg": ["Planar Relation", "Willi Baumeister", "1920"],
-        "11.jpg": ["With full force", "Lyubov Popova", ""],
-        "12.jpg": ["Eroun", "Wolfgang Paalen", "1944"],
-        "13.jpg": ["1949-A-No.1", "Clyfford Still", "1949"],
-        "14.jpg": ["The Air", "Joan Miro", "1937"]
+        # "3.jpg": ["Spring", "David Burliuk", "1907"], # repetitive
+        "4.jpg": ["The Mahatmas Present Standing Point, Series II, No. 2a", "Hilma af Klint", "1920"],
+        "5.jpg": ["Landscape", "Arthur Beecher Carles", "1910"],
+        "6.jpg": ["Abstract Painting", "Vanessa Bell", "1914"], #note similarity
+        "7.jpg": ["The Yellow Curtain", "Henri Matisse", "1915"],
+        "8.jpg": ["Variation", "Alexej von Jawlensky", "1918"],
+        "9.jpg": ["Planar Relation", "Willi Baumeister", "1920"],
+        "10.jpg": ["With full force", "Lyubov Popova", ""],
+        # "12.jpg": ["Eroun", "Wolfgang Paalen", "1944"],
+        "11.jpg": ["1949-A-No.1", "Clyfford Still", "1949"],
+        "12.jpg": ["The Air", "Joan Miro", "1937"],
+        "13.jpg": ["Bos", "Jacoba van Heemskerck", "1912"]
 }
 
 tracks_list = [
     "52lJakcAPTde2UnuvEqFaK", "0PfQd8JoZTLC7QmuSALrnH", "1LqFdwLKqa8Ep6q9LEUCih", "2Yb67ozAhETHhy5i5eIDI1",
-    "6cPbVV2I3AjhSHxB5J4Ozd", "0nF5aQoLs2YtbWwClXvumL", "2mbdpLcDqFsA5efI0LJn5i",
-    "6C5iTxvpG5Geb66InRxoSP"
+    "6cPbVV2I3AjhSHxB5J4Ozd", "0nF5aQoLs2YtbWwClXvumL", "2mbdpLcDqFsA5efI0LJn5i", "0Cr1H8kCXN5qBAQCHYtVGu",
+    "6qxFruTA3sBLF29FXLR6LW", "7iocNjLrxPHLl8njgRlv5U", #"4cKmnSLAhwxaWKXQhfz5Ju"
 ]
 
-@app.route("/")
-def hello():    
-    painting, painting_info = random.choice(list(paintings_dict.items()))
+def get_dependencies():
+    # painting, painting_info = random.choice(list(paintings_dict.items()))
+    painting = paintings_order[painting_index]
+    painting_info = paintings_dict[painting]
     matcher = MusicArtMatcher(config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, 100)
     track_id = matcher.match('../app/static/images/', painting, tracks_list)
     print(track_id)
-    # painting = str(painting_index % len(paintings_dict.keys())) + ".jpg"
-    # painting_info = paintings_dict[painting]
+    
     track = "https://open.spotify.com/embed/track/" + track_id
+    return painting, painting_info, track
+
+@app.route("/")
+def hello():   
+    global painting_index
+    painting_index = 0
+    painting, painting_info, track = get_dependencies() 
+    print painting_index
     return render_template('index.html', painting_path="/static/images/" + painting, title=painting_info[0], artist=painting_info[1], track_url=track)
  
+@app.route("/prev")
+def previous():
+    global painting_index
+    painting_index = (painting_index - 1) % len(paintings_dict.keys())
+    print painting_index
+    painting, painting_info, track = get_dependencies() 
+    return render_template('index.html', painting_path="/static/images/" + painting, title=painting_info[0], artist=painting_info[1], track_url=track)
+
+@app.route("/next")
+def next():
+    global painting_index
+    painting_index = (painting_index + 1) % len(paintings_dict.keys())
+    print painting_index
+    painting, painting_info, track = get_dependencies() 
+    return render_template('index.html', painting_path="/static/images/" + painting, title=painting_info[0], artist=painting_info[1], track_url=track)
+
 
 if __name__ == "__main__":
     app.run()

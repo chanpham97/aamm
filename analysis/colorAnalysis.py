@@ -154,10 +154,28 @@ def get_scaled_num_colors(colors):
     if num_colors <= 5:
         return 8
     return 10
-    
+
 
 def get_scaled_brightness(brightness):
-    return math.ceil(brightness/10.0)
+    if brightness <= 30:
+        return 1
+    if brightness <= 35:
+        return 2
+    if brightness <= 40:
+        return 3
+    if brightness <= 45:
+        return 4
+    if brightness <= 50:
+        return 5
+    if brightness <= 55:
+        return 6
+    if brightness <= 60:
+        return 7
+    if brightness <= 65:
+        return 8
+    if brightness <= 75:
+        return 9
+    return 10
 
 
 def get_scaled_values(img_bgr):
@@ -167,24 +185,30 @@ def get_scaled_values(img_bgr):
     print('color raw: ', tup[1], bright)
     return get_scaled_color_breakdown(tup[0]), get_scaled_num_colors(tup[1]), get_scaled_brightness(bright)
 
+
 def main():
+    for i in range(0, 16):
+        img_bgr = cv.imread('../app/static/images/' + str(i) + '.jpg', cv.IMREAD_COLOR) #default BGR
+        a = ColorAnalysis()
+        brightness = a.brightness_bgr(img_bgr)
+        print(str(i), brightness, get_scaled_brightness(brightness))
 
-    img_bgr = cv.imread(sys.argv[1], cv.IMREAD_COLOR) #default BGR
-    try:
-        max_val = input("Image dimensions are {}. To resize, enter max dimension. Else, default is 300. ".format(img_bgr.shape))
-        img_bgr = resize_image(img_bgr, max_val) if max_val else resize_image(img_bgr)
-    except (EOFError, ValueError):
-        pass
+    # try:
+    #     max_val = input("Image dimensions are {}. To resize, enter max dimension. Else, default is 300. ".format(img_bgr.shape))
+    #     img_bgr = resize_image(img_bgr, max_val) if max_val else resize_image(img_bgr)
+    # except (EOFError, ValueError):
+    #     pass
             
-    # bgr_analysis(img_bgr)
+    # # bgr_analysis(img_bgr)
 
-    img_bgr = cv.cvtColor(img_bgr, cv.COLOR_BGR2HSV)
-    #bgr_analysis(img_bgr)
+    # img_bgr = cv.cvtColor(img_bgr, cv.COLOR_BGR2HSV)
+    # #bgr_analysis(img_bgr)
     
-    print("****")
-    a = ColorAnalysis()
-    print(a.color_breakdown(img_bgr))
-    print(a.brightness_bgr(img_bgr))
-    print(get_scaled_values(img_bgr))
+    # print("****")
+    # a = ColorAnalysis()
+    # print(a.color_breakdown(img_bgr))
+    # print(a.brightness_bgr(img_bgr))
+    # print(get_scaled_values(img_bgr))
 
-#main()
+
+# main()

@@ -27,6 +27,7 @@ class MusicArtMatcher:
             return
         img_bgr = colorAnalysis.resize_image(img_bgr, self.max_val) if self.max_val else colorAnalysis.resize_image(img_bgr)
         color_sentiment, scaled_num_colors, scaled_brightness = (colorAnalysis.get_scaled_values(img_bgr))
+        print('sentiment, number of colors, brightness')
         print('color scaled', color_sentiment, scaled_num_colors, scaled_brightness)
         target_music_vector = self.convert_art_to_music_vector(color_sentiment, scaled_num_colors, scaled_brightness)
         
@@ -57,21 +58,21 @@ class MusicArtMatcher:
             
     def convert_art_to_music_vector(self, color_sentiment, scaled_num_colors, scaled_brightness):
         key = 1 if color_sentiment < 5 else 10
-        tempo = scaled_num_colors
+        energy = scaled_num_colors
         #loudness = num_colors
-        energy = scaled_brightness
+        tempo = scaled_brightness
         return energy, tempo, key
         
 def __main__():
-    track_list = [
-    "52lJakcAPTde2UnuvEqFaK", "0PfQd8JoZTLC7QmuSALrnH", "1LqFdwLKqa8Ep6q9LEUCih", "2Yb67ozAhETHhy5i5eIDI1",
-    "6cPbVV2I3AjhSHxB5J4Ozd", "0nF5aQoLs2YtbWwClXvumL", "2mbdpLcDqFsA5efI0LJn5i",
-    "6C5iTxvpG5Geb66InRxoSP"
-    ]
+    tracks_dictionary = {
+        "52lJakcAPTde2UnuvEqFaK", "0PfQd8JoZTLC7QmuSALrnH", "1LqFdwLKqa8Ep6q9LEUCih",
+        "2Yb67ozAhETHhy5i5eIDI1", "6cPbVV2I3AjhSHxB5J4Ozd", "2mbdpLcDqFsA5efI0LJn5i",
+        "6C5iTxvpG5Geb66InRxoSP", "23if4cvw0UI7c8Uc5OOvss","38J3F2EqXt9DnRstJiziTJ"
+    }
     art_filename = sys.argv[1]
     
     matcher = MusicArtMatcher(config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, 300)
     
     print("RESULT:" , matcher.match('', art_filename, track_list))
     
-__main__()
+# __main__()
