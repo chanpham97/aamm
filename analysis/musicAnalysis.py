@@ -4,6 +4,7 @@ import config
 import json
 import spotipy
 import time
+import math
 
 # Reference for Spotify features: https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/
 
@@ -13,28 +14,29 @@ class MusicAnalyzer:
         self.config_id = config_id
     
     def scale_energy(self, energy):
-        if energy <= 0.05:
-            return -1 # low energy
-        if energy >= 0.4:
-            return 1 # high energy
-        else:
-            return 0
+        return math.ceil(energy*10.0) # 1 to 10
         
-    def scale_loudness(self, energy):
-        if energy <= -25:
-            return -1 # low vol
-        if energy >= 13:
-            return 1 # high vol
-        else:
-            return 0
+    # def scale_loudness(self, energy):
+    #     if energy <= -25:
+    #         return -1 # low vol
+    #     if energy >= 13:
+    #         return 1 # high vol
+    #     else:
+    #         return 0
     
     def scale_tempo(self, energy):
-        if energy <= 40:
-            return -1 # low speed
-        if energy >= 80:
-            return 1 # high speed
-        else:
-            return 0
+        if energy <= 70:
+            return 1
+        if energy <= 75:
+            return 3
+        if energy <= 80:
+            return 5
+        if energy <= 85:
+            return 7
+        if energy <= 90:
+            return 9
+        return 10
+    
         
     def get_scaled_track_features(self, tid, annotation=None):
         #print()
@@ -53,7 +55,7 @@ class MusicAnalyzer:
         #print ("analysis retrieved in %.2f seconds" % (delta,))
         
         entry = json_features[0]
-        #print(entry["energy"], entry["loudness"], entry["tempo"], entry["mode"])
+        print(tid, entry["energy"], entry["tempo"], entry["mode"])
         
         if annotation:
             print("Annotation:", annotation)
@@ -65,13 +67,22 @@ def __main__():
     
     tracks_dictionary = {
                 "spotify:track:52lJakcAPTde2UnuvEqFaK": "Angry, fast, percussive, orchestral", 
-                "spotify:track:0PfQd8JoZTLC7QmuSALrnH": "One instrument, peaceful, calm"
-             }
+                "spotify:track:0PfQd8JoZTLC7QmuSALrnH": "One instrument, peaceful, calm",
+                "spotify:track:1LqFdwLKqa8Ep6q9LEUCih": "Two instruments, peaceful, sad",
+                "spotify:track:2Yb67ozAhETHhy5i5eIDI1": "Happy, slow",
+                "spotify:track:6cPbVV2I3AjhSHxB5J4Ozd": "Fast, angry",
+                "spotify:track:1lhhemBdKoghyFklQpnLgo": "Slow, scary, apocalyptic",
+                "spotify:track:0nF5aQoLs2YtbWwClXvumL": "Fast, frantic",
+                "spotify:track:2mbdpLcDqFsA5efI0LJn5i": "Fast, happy",
+                "spotify:track:6C5iTxvpG5Geb66InRxoSP": "Slow, happy, calm"
+    }
     
-    for track,annot in tracks_dictionary.items():
+    for track, annot in tracks_dictionary.items():
         print(music_matcher.get_scaled_track_features(track, annot))
+        print()
 
-#__main__()
+
+# __main__()
 
 ############# NOTES ####################
 # one key feature is: energy, loudness, tempo. maybe key would allow us to classify (happy v sad for the colors)

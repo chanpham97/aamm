@@ -1,6 +1,7 @@
 from colorIdentifier import ColorBucketer
 import cv2 as cv
 import sys
+import math
 
 class ColorAnalysis: 
     def __init__(self):
@@ -125,42 +126,45 @@ def hsv_analysis(img_hsv):
 
 def get_scaled_color_breakdown(color_dict):
     colors_pos_negative = {
-           'red': -0.8,
-           'green': 0.8,
-           'blue': 0.6,
-           'yellow': 0.7,
-           'pink': 0.5,
-           'white': 0.7,
-           'black': -0.9
-        }
+           'black': 1,
+           'red': 3,
+           'pink': 4,
+           'white': 5,
+           'green': 7,
+           'blue': 9,
+           'yellow': 10
+    }
     total = 0
     for color, percent in color_dict.items():
-        total += colors_pos_negative[color] * percent
+        total += colors_pos_negative[color] * percent/100.0
+        # print(color, colors_pos_negative[color], percent, colors_pos_negative[color] * percent)
+        # print(total)
     return total
     
 def get_scaled_num_colors(colors):
     num_colors = len(colors)
-    if num_colors >= 6:
+    if num_colors == 1:
         return 1
     if num_colors <= 2:
-        return -1
-    else:
-        return 0
+        return 2
+    if num_colors <= 3:
+        return 4
+    if num_colors <= 4:
+        return 6
+    if num_colors <= 5:
+        return 8
+    return 10
+    
 
 def get_scaled_brightness(brightness):
-    b = brightness*0.01
-    if b >= 0.5:
-        return 1
-    if b <= 0.3:
-        return -1
-    else:
-        return 0
+    return math.ceil(brightness/10.0)
+
 
 def get_scaled_values(img_bgr):
     a = ColorAnalysis()
     tup = a.color_breakdown(img_bgr)
     bright = a.brightness_bgr(img_bgr)
-    #print(tup[0], tup[1], bright)
+    print('color raw: ', tup[1], bright)
     return get_scaled_color_breakdown(tup[0]), get_scaled_num_colors(tup[1]), get_scaled_brightness(bright)
 
 def main():
