@@ -59,30 +59,32 @@ class MusicAnalyzer:
         
         if annotation:
             print("Annotation:", annotation)
-            
-        return self.scale_energy(entry["energy"]), self.scale_tempo(entry["tempo"]), entry["mode"]
+        
+        scaled_mode = 1 if entry["mode"] == 0 else 10
+        return self.scale_energy(entry["energy"]), self.scale_tempo(entry["tempo"]), scaled_mode
     
 def __main__():
     music_matcher = MusicAnalyzer(config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET)
     
     tracks_dictionary = {
-                "spotify:track:52lJakcAPTde2UnuvEqFaK": "Angry, fast, percussive, orchestral", 
-                "spotify:track:0PfQd8JoZTLC7QmuSALrnH": "One instrument, peaceful, calm",
-                "spotify:track:1LqFdwLKqa8Ep6q9LEUCih": "Two instruments, peaceful, sad",
-                "spotify:track:2Yb67ozAhETHhy5i5eIDI1": "Happy, slow",
-                "spotify:track:6cPbVV2I3AjhSHxB5J4Ozd": "Fast, angry",
-                "spotify:track:1lhhemBdKoghyFklQpnLgo": "Slow, scary, apocalyptic",
-                "spotify:track:0nF5aQoLs2YtbWwClXvumL": "Fast, frantic",
-                "spotify:track:2mbdpLcDqFsA5efI0LJn5i": "Fast, happy",
-                "spotify:track:6C5iTxvpG5Geb66InRxoSP": "Slow, happy, calm"
+                "52lJakcAPTde2UnuvEqFaK": "Angry, fast, percussive, orchestral", 
+                "0PfQd8JoZTLC7QmuSALrnH": "One instrument, peaceful, calm",
+                "1LqFdwLKqa8Ep6q9LEUCih": "Two instruments, peaceful, sad",
+                "2Yb67ozAhETHhy5i5eIDI1": "Happy, slow",
+                "6cPbVV2I3AjhSHxB5J4Ozd": "Fast, angry",
+                "2mbdpLcDqFsA5efI0LJn5i": "Fast, happy, jiggy",
+                "6C5iTxvpG5Geb66InRxoSP": "Slow, happy, calm",
+                "23if4cvw0UI7c8Uc5OOvss": "Happy, fast",
+                "38J3F2EqXt9DnRstJiziTJ": "Gliding"
+
     }
     
+    print("energy, tempo, mode")
     for track, annot in tracks_dictionary.items():
         print(music_matcher.get_scaled_track_features(track, annot))
-        print()
 
 
-# __main__()
+__main__()
 
 ############# NOTES ####################
 # one key feature is: energy, loudness, tempo. maybe key would allow us to classify (happy v sad for the colors)
