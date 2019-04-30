@@ -49,8 +49,8 @@ class ColorBucketer:
 
     def d(self, c1, c2):
         # select weighting based on red presence
-        r1, g1, b1 = c1
-        r2, g2, b2 = c2
+        b1, g1, r1 = c1
+        b2, g2, r2 = c2
         # return sqrt(((r1-r2)**2) + ((g1-g2)**2) + ((b1-b2)**2))
 
         if r1 >= 128 and r2 >= 128:

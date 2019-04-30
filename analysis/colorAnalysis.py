@@ -7,6 +7,7 @@ class ColorAnalysis:
     def __init__(self):
         self.bucketer = ColorBucketer()
 
+
     def convert_to_percent(self, histogram):
         total = float(sum(histogram.values()))
         for val in histogram:
@@ -95,7 +96,7 @@ def bgr_analysis(img_bgr):
     cv.waitKey(0)
     # cv.imshow("bnw", img_bnw)
     try:
-        save = input("To save, input file name. Else, press enter. ")
+        save = raw_input("To save, input file name. Else, press enter. ")
         if save:
             cv.imwrite(save, imgOut)
     except (EOFError, ValueError):
@@ -185,29 +186,34 @@ def get_scaled_values(img_bgr):
     print('color raw: ', tup[1], bright)
     return get_scaled_color_breakdown(tup[0]), get_scaled_num_colors(tup[1]), get_scaled_brightness(bright)
 
+def read_bgr(path):
+    img_bgr = cv.imread(path, cv.IMREAD_COLOR) #default BGR
+    return img_bgr
 
 def main():
-    for i in range(0, 16):
-        img_bgr = cv.imread('../app/static/images/' + str(i) + '.jpg', cv.IMREAD_COLOR) #default BGR
-        a = ColorAnalysis()
-        brightness = a.brightness_bgr(img_bgr)
-        print(str(i), brightness, get_scaled_brightness(brightness))
+    # for i in range(0, 16):
+    #     a = ColorAnalysis()
+    #     brightness = a.brightness_bgr(img_bgr)
+    #     print(str(i), brightness, get_scaled_brightness(brightness))
+    
+    
+    img_bgr = cv.imread(sys.argv[1], cv.IMREAD_COLOR) #default BGR
 
-    # try:
-    #     max_val = input("Image dimensions are {}. To resize, enter max dimension. Else, default is 300. ".format(img_bgr.shape))
-    #     img_bgr = resize_image(img_bgr, max_val) if max_val else resize_image(img_bgr)
-    # except (EOFError, ValueError):
-    #     pass
+    try:
+        max_val = raw_input("Image dimensions are {}. To resize, enter max dimension. Else, default is 300. ".format(img_bgr.shape))
+        img_bgr = resize_image(img_bgr, max_val) if max_val else resize_image(img_bgr)
+    except (EOFError, ValueError):
+        pass
             
-    # # bgr_analysis(img_bgr)
+    bgr_analysis(img_bgr)
 
     # img_bgr = cv.cvtColor(img_bgr, cv.COLOR_BGR2HSV)
-    # #bgr_analysis(img_bgr)
+    #bgr_analysis(img_bgr)
     
-    # print("****")
-    # a = ColorAnalysis()
-    # print(a.color_breakdown(img_bgr))
-    # print(a.brightness_bgr(img_bgr))
+    print("****")
+    a = ColorAnalysis()
+    print(a.color_breakdown(img_bgr))
+    print(a.brightness_bgr(img_bgr))
     # print(get_scaled_values(img_bgr))
 
 
