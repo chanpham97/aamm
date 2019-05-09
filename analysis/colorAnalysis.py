@@ -2,7 +2,11 @@ from colorIdentifier import ColorBucketer
 import cv2 as cv
 import sys
 import math
+<<<<<<< HEAD
 import numpy as np
+=======
+from statistics import mean
+>>>>>>> 1249780659909541637f89240b90496b7881ecc5
 
 class ColorAnalysis: 
     def __init__(self):
@@ -38,6 +42,60 @@ class ColorAnalysis:
                 present.append(col)
 
         return (histogram, present, imageOut)
+    
+    def color_gradients(self, image, outputImage=False):
+        rows, cols, depth = image.shape
+        
+        #imageOut = []
+        if outputImage:
+            #imageOut = image.copy()
+            self.bucketer.reset_bias()
+
+        b_gradients_horiz = []
+        g_gradients_horiz = []
+        r_gradients_horiz = []
+        b_gradients_vert = []
+        g_gradients_vert = []
+        r_gradients_vert = []        
+        
+        for row in range(1, rows-1):
+            for col in range(1, cols-1):
+                b, g, r = list(image[row, col])
+                b_left, g_left, r_left = list(image[row, col-1])
+                b_right, g_right, r_right = list(image[row, col+1])
+                b_top, g_top, r_top = list(image[row-1, col])
+                b_bottom, g_bottom, r_bottom = list(image[row+1, col]) 
+                
+                b_gradients_horiz.append(abs(b_right-b_left))
+                g_gradients_horiz.append(abs(g_right-g_left))
+                r_gradients_horiz.append(abs(r_right-r_left))
+                b_gradients_vert.append(abs(b_top-b_bottom))
+                g_gradients_vert.append(abs(g_top-g_bottom))
+                r_gradients_vert.append(abs(r_top-r_bottom))
+                
+                #color = self.bucketer.bucket_color(image[row, col])
+                #if outputImage:
+                #    imageOut[row, col] = [abs(b_right-b_left), abs(g_right-g_left), abs(r_right-r_left)]
+
+        b_gradients_horiz = [x for x in b_gradients_horiz if x > 0]
+        g_gradients_horiz = [x for x in g_gradients_horiz if x > 0]
+        r_gradients_horiz = [x for x in r_gradients_horiz if x > 0]
+        b_gradients_vert = [x for x in b_gradients_vert if x > 0]
+        g_gradients_vert = [x for x in g_gradients_vert if x > 0]
+        r_gradients_vert = [x for x in r_gradients_vert if x > 0] 
+        
+        mean_b_gradients_horiz = mean(b_gradients_horiz)
+        mean_g_gradients_horiz = mean(g_gradients_horiz)
+        mean_r_gradients_horiz = mean(r_gradients_horiz)
+        mean_b_gradients_vert = mean(b_gradients_vert)
+        mean_g_gradients_vert = mean(g_gradients_vert)
+        mean_r_gradients_vert = mean(r_gradients_vert)
+        
+        print(mean_b_gradients_horiz, mean_g_gradients_horiz, mean_r_gradients_horiz, 
+              mean_b_gradients_vert, mean_g_gradients_vert, mean_r_gradients_vert)
+
+        return (mean_b_gradients_horiz, mean_g_gradients_horiz, mean_r_gradients_horiz, 
+              mean_b_gradients_vert, mean_g_gradients_vert, mean_r_gradients_vert)
 
         
     def brightness_bgr(self, img):
@@ -144,13 +202,33 @@ def bgr_analysis(img_bgr):
         print("{}: {}".format(color, round(colBreakdown[color], 2)))
 
     print("Average brightness: {}".format(a.brightness_bgr(img_bgr)))
+    
+    print("Color gradient values: {}".format(a.color_gradients(img_bgr)))
 
     cv.imshow('imageIn', img_bgr)
     cv.imshow('imageOut', imgOut)
-    cv.waitKey(0)
+    cv.waitKey(60)
     # cv.imshow("bnw", img_bnw)
     try:
-        save = raw_input("To save, input file name. Else, press enter. ")
+        save = input("To save, input file name. Else, press enter. ")
+        if save:
+            cv.imwrite(save, imgOut)
+    except (EOFError, ValueError):
+        pass
+        
+    cv.destroyAllWindows()
+
+def bgr_gradient_analysis(img_bgr):
+    a = ColorAnalysis()
+
+    num, imgOut = a.color_gradients(img_bgr, True) 
+    
+    cv.imshow('imageIn', img_bgr)
+    cv.imshow('imageOut', imgOut)
+    cv.waitKey(60)
+    
+    try:
+        save = input("To save, input file name. Else, press enter. ")
         if save:
             cv.imwrite(save, imgOut)
     except (EOFError, ValueError):
@@ -245,19 +323,33 @@ def main():
     img_bgr = read_bgr(sys.argv[1]) #default BGR
 
     try:
-        max_val = raw_input("Image dimensions are {}. To resize, enter max dimension. Else, default is 300. ".format(img_bgr.shape))
+        max_val = input("Image dimensions are {}. To resize, enter max dimension. Else, default is 300. ".format(img_bgr.shape))
         img_bgr = resize_image(img_bgr, max_val) if max_val else resize_image(img_bgr)
     except (EOFError, ValueError):
         pass
+<<<<<<< HEAD
      
     # bgr_analysis(img_bgr)
+=======
+            
+    bgr_analysis(img_bgr)
+    #bgr_gradient_analysis(img_bgr)
+>>>>>>> 1249780659909541637f89240b90496b7881ecc5
 
     # img_bgr = cv.cvtColor(img_bgr, cv.COLOR_BGR2HSV)
     #bgr_analysis(img_bgr)
     
+<<<<<<< HEAD
     print("****")
     a = ColorAnalysis()
     
+=======
+#    print("****")
+#    a = ColorAnalysis()
+#    print(a.color_breakdown(img_bgr))
+#    print(a.brightness_bgr(img_bgr))
+    # print(get_scaled_values(img_bgr))
+>>>>>>> 1249780659909541637f89240b90496b7881ecc5
 
 
 main()
