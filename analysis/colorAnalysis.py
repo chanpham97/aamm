@@ -2,11 +2,8 @@ from colorIdentifier import ColorBucketer
 import cv2 as cv
 import sys
 import math
-<<<<<<< HEAD
 import numpy as np
-=======
 from statistics import mean
->>>>>>> 1249780659909541637f89240b90496b7881ecc5
 
 class ColorAnalysis: 
     def __init__(self):
@@ -327,29 +324,18 @@ def main():
         img_bgr = resize_image(img_bgr, max_val) if max_val else resize_image(img_bgr)
     except (EOFError, ValueError):
         pass
-<<<<<<< HEAD
-     
-    # bgr_analysis(img_bgr)
-=======
             
     bgr_analysis(img_bgr)
     #bgr_gradient_analysis(img_bgr)
->>>>>>> 1249780659909541637f89240b90496b7881ecc5
 
     # img_bgr = cv.cvtColor(img_bgr, cv.COLOR_BGR2HSV)
     #bgr_analysis(img_bgr)
     
-<<<<<<< HEAD
-    print("****")
-    a = ColorAnalysis()
-    
-=======
 #    print("****")
 #    a = ColorAnalysis()
 #    print(a.color_breakdown(img_bgr))
 #    print(a.brightness_bgr(img_bgr))
-    # print(get_scaled_values(img_bgr))
->>>>>>> 1249780659909541637f89240b90496b7881ecc5
+#    print(get_scaled_values(img_bgr))
 
 
 main()
