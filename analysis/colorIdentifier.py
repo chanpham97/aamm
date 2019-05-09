@@ -8,15 +8,21 @@ class ColorBucketer:
     def __init__(self):
         self.BIAS = 0 # so only very white or very black colors identified as black
         self.MAX_DISTANCE = sqrt(255**2 + 255**2 + 255**2)
-
+        
         self.color_bases = {
-           'red': [0, 0, 255],
-           'green': [0, 255, 0],
-           'blue': [255, 0, 0],
-           'yellow': [0, 255, 255],
-           'pink': [255, 0, 255],
+        }
+        self.color_bases = {
+           'black': [0, 0, 0], 
+           'gray': [127, 127, 127], 
            'white': [255, 255, 255],
-           'black': [0, 0, 0]
+           'red': [0, 0, 255], 
+           'blue': [255, 0, 0], 
+           'green': [0, 255, 0],
+           'yellow': [0, 255, 255],
+           'orange': [0, 127, 255],
+           'purple': [255, 0, 127], 
+           'pink': [255, 0, 255],
+           'brown': [25, 50, 100]
         }
 
         self.HUE_DIST = 10
