@@ -2,13 +2,15 @@ from colorIdentifier import ColorBucketer
 import cv2 as cv
 import sys
 import math
+import numpy as np
 
 class ColorAnalysis: 
     def __init__(self):
         self.bucketer = ColorBucketer()
+        self.PERC_MIN = 0.1
 
 
-    def convert_to_percent(self, histogram):
+    def hist_to_percent(self, histogram):
         total = float(sum(histogram.values()))
         for val in histogram:
             histogram[val] = histogram[val]/total * 100
@@ -29,7 +31,7 @@ class ColorAnalysis:
                 if outputImage:
                     imageOut[r, c] = self.bucketer.color_bases[color]
         
-        self.convert_to_percent(histogram)
+        self.hist_to_percent(histogram)
         present = []
         for col in histogram:
             if histogram[col] > 5:
@@ -63,13 +65,65 @@ class ColorAnalysis:
                 # if outputImage:
                 #     imageOut[r, c] = 
         
-        self.convert_to_percent(histogram)
+        self.hist_to_percent(histogram)
         present = []
         for col in histogram:
             if histogram[col] > 5:
                 present.append(col)
 
         return (histogram, present, imageOut)
+
+
+    # source: https://www.pyimagesearch.com/2015/04/06/zero-parameter-automatic-canny-edge-detection-with-python-and-opencv/
+    def auto_canny(image, sigma=0.33):
+        # compute the median of the single channel pixel intensities
+        v = np.median(image)
+        # apply automatic Canny edge detection using the computed median
+        lower = int(max(0, (1.0 - sigma) * v))
+        upper = int(min(255, (1.0 + sigma) * v))
+        edged = cv.Canny(image, lower, upper)
+        return edged
+
+
+    def calc_perc_filled(img, img_filled):
+        diff = img - img_filled
+        h, w = diff.shape
+        total = float(h * w)
+        count = np.count_nonzero(diff)
+        print count, count*100/total
+        return count*100/total
+
+
+    def count_blocks(self, img_bgr)
+        blurred = cv.medianBlur(img_bgr, 7)
+        edges = auto_canny(blurred)
+
+        # cv.imshow('edges', edges)
+        # cv.waitKey(0)
+        # cv.destroyAllWindows()
+        
+        h, w = edges.shape
+        # print (h, w)
+        filled = edges.copy()
+        mask = np.zeros((h+2, w+2), np.uint8)
+
+        blocks = 0
+        for row in range(h):
+            for col in range(w):
+                # print (row, col)
+                # print filled[row][col]
+                if filled[row][col] == 0:
+                    filled_temp = filled.copy()
+                    cv.floodFill(filled_temp, mask, (col, row), 255)
+                    if calc_perc_filled(filled, filled_temp) > self.PERC_MIN:
+                        blocks = blocks + 1
+                    filled = filled_temp
+                    # cv.imshow('filled' + str(blocks), filled)
+                    # cv.waitKey(0)
+                    # cv.destroyAllWindows()
+        return blocks
+
+    # def color_block_finder(self, img_bgr):
 
 
 def resize_image(image, max_val=300):
@@ -114,17 +168,6 @@ def hsv_analysis(img_hsv):
         print("{}: {}".format(hue, round(hueBreakdown[hue], 2)))
 
 
-    # cv.imshow('imageIn', img_hsv)
-    # cv.imshow('imageOut_hsv', imgOut)
-    # cv.waitKey(0)
-
-    # try:
-    #     save = raw_input("To save, input file name. Else, press enter. ")
-    #     if save:
-    #         cv.imwrite(save, imgOut)
-    # except (EOFError, ValueError):
-    #     pass
-
 def get_scaled_color_breakdown(color_dict):
     colors_pos_negative = {
            'black': 1,
@@ -142,6 +185,7 @@ def get_scaled_color_breakdown(color_dict):
         # print(total)
     return total
     
+
 def get_scaled_num_colors(colors):
     num_colors = len(colors)
     if num_colors == 1:
@@ -186,35 +230,34 @@ def get_scaled_values(img_bgr):
     print('color raw: ', tup[1], bright)
     return get_scaled_color_breakdown(tup[0]), get_scaled_num_colors(tup[1]), get_scaled_brightness(bright)
 
+
 def read_bgr(path):
     img_bgr = cv.imread(path, cv.IMREAD_COLOR) #default BGR
     return img_bgr
 
+    
 def main():
     # for i in range(0, 16):
     #     a = ColorAnalysis()
     #     brightness = a.brightness_bgr(img_bgr)
     #     print(str(i), brightness, get_scaled_brightness(brightness))
     
-    
-    img_bgr = cv.imread(sys.argv[1], cv.IMREAD_COLOR) #default BGR
+    img_bgr = read_bgr(sys.argv[1]) #default BGR
 
     try:
         max_val = raw_input("Image dimensions are {}. To resize, enter max dimension. Else, default is 300. ".format(img_bgr.shape))
         img_bgr = resize_image(img_bgr, max_val) if max_val else resize_image(img_bgr)
     except (EOFError, ValueError):
         pass
-            
-    bgr_analysis(img_bgr)
+     
+    # bgr_analysis(img_bgr)
 
     # img_bgr = cv.cvtColor(img_bgr, cv.COLOR_BGR2HSV)
     #bgr_analysis(img_bgr)
     
     print("****")
     a = ColorAnalysis()
-    print(a.color_breakdown(img_bgr))
-    print(a.brightness_bgr(img_bgr))
-    # print(get_scaled_values(img_bgr))
+    
 
 
-# main()
+main()
