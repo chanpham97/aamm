@@ -10,8 +10,6 @@ class ColorBucketer:
         self.MAX_DISTANCE = sqrt(255**2 + 255**2 + 255**2)
         
         self.color_bases = {
-        }
-        self.color_bases = {
            'black': [0, 0, 0], 
            'gray': [127, 127, 127], 
            'white': [255, 255, 255],

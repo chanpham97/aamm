@@ -81,18 +81,17 @@ class ColorAnalysis:
         g_gradients_vert = [x for x in g_gradients_vert if x > 0]
         r_gradients_vert = [x for x in r_gradients_vert if x > 0] 
         
-        mean_b_gradients_horiz = mean(b_gradients_horiz)
-        mean_g_gradients_horiz = mean(g_gradients_horiz)
-        mean_r_gradients_horiz = mean(r_gradients_horiz)
-        mean_b_gradients_vert = mean(b_gradients_vert)
-        mean_g_gradients_vert = mean(g_gradients_vert)
-        mean_r_gradients_vert = mean(r_gradients_vert)
+        mean_gradients = {}
+        mean_gradients["mean_b_gradients_horiz"] = mean(b_gradients_horiz)
+        mean_gradients["mean_g_gradients_horiz"] = mean(g_gradients_horiz)
+        mean_gradients["mean_r_gradients_horiz"] = mean(r_gradients_horiz)
+        mean_gradients["mean_b_gradients_vert"] = mean(b_gradients_vert)
+        mean_gradients["mean_g_gradients_vert"] = mean(g_gradients_vert)
+        mean_gradients["mean_r_gradients_vert"] = mean(r_gradients_vert)
         
-        print(mean_b_gradients_horiz, mean_g_gradients_horiz, mean_r_gradients_horiz, 
-              mean_b_gradients_vert, mean_g_gradients_vert, mean_r_gradients_vert)
+        # print mean_gradients
 
-        return (mean_b_gradients_horiz, mean_g_gradients_horiz, mean_r_gradients_horiz, 
-              mean_b_gradients_vert, mean_g_gradients_vert, mean_r_gradients_vert)
+        return mean_gradients
 
         
     def brightness_bgr(self, img):
@@ -130,7 +129,7 @@ class ColorAnalysis:
 
 
     # source: https://www.pyimagesearch.com/2015/04/06/zero-parameter-automatic-canny-edge-detection-with-python-and-opencv/
-    def auto_canny(image, sigma=0.33):
+    def auto_canny(self, image, sigma=0.33):
         # compute the median of the single channel pixel intensities
         v = np.median(image)
         # apply automatic Canny edge detection using the computed median
@@ -140,18 +139,18 @@ class ColorAnalysis:
         return edged
 
 
-    def calc_perc_filled(img, img_filled):
+    def calc_perc_filled(self, img, img_filled):
         diff = img - img_filled
         h, w = diff.shape
         total = float(h * w)
         count = np.count_nonzero(diff)
-        print count, count*100/total
+        # print count, count*100/total
         return count*100/total
 
 
-    def count_blocks(self, img_bgr)
+    def count_blocks(self, img_bgr):
         blurred = cv.medianBlur(img_bgr, 7)
-        edges = auto_canny(blurred)
+        edges = self.auto_canny(blurred)
 
         # cv.imshow('edges', edges)
         # cv.waitKey(0)
@@ -170,7 +169,7 @@ class ColorAnalysis:
                 if filled[row][col] == 0:
                     filled_temp = filled.copy()
                     cv.floodFill(filled_temp, mask, (col, row), 255)
-                    if calc_perc_filled(filled, filled_temp) > self.PERC_MIN:
+                    if self.calc_perc_filled(filled, filled_temp) > self.PERC_MIN:
                         blocks = blocks + 1
                     filled = filled_temp
                     # cv.imshow('filled' + str(blocks), filled)
@@ -338,4 +337,4 @@ def main():
 #    print(get_scaled_values(img_bgr))
 
 
-main()
+# main()
