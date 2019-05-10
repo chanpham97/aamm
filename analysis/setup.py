@@ -75,7 +75,7 @@ def fill_vectors(infile, outfile):
             path = "paintings/" + row["title"] + ".jpg"
             print path
 
-            if "" not in row.values():
+            if "" not in [val for key, val in row.items() if key in get_features(a)]:
                 # print "vector already set"
                 # print row["brightness"] == ""
                 writer.writerow(row)
@@ -99,10 +99,6 @@ def fill_vectors(infile, outfile):
 
 
 def download_image(url, path):
-    if os.path.isfile(path):
-        # print "file exists"
-        return (True, url)
-
     r = requests.get(url, stream=True)
     if r.status_code == 404 and url.endswith("!Large.jpg"):
         url = url[:-10]
@@ -116,6 +112,6 @@ def download_image(url, path):
     return (False, None)                   
 
 
-add_artist(sys.argv[1], sys.argv[2])
-# fill_vectors(sys.argv[1], sys.argv[2])
+# add_artist(sys.argv[1], sys.argv[2])
+fill_vectors(sys.argv[1], sys.argv[2])
 
