@@ -20,12 +20,13 @@ def read_db(db_name):
 
 def get_painting(paintings):
     index = random.randint(0, len(paintings)-1)
-    print index
     painting = paintings[index]
     title = painting["title"].decode('utf-8')
     artist = painting["artistName"].decode('utf-8')
     url = painting["image"].decode('utf-8')
-    
+    label = painting["label"]
+    print index, label
+
     track_id = '52lJakcAPTde2UnuvEqFaK'
     track = "https://open.spotify.com/embed/track/" + track_id
     return index, title, artist, url, track
@@ -37,7 +38,7 @@ tracks_list = [
     "6cPbVV2I3AjhSHxB5J4Ozd", "0nF5aQoLs2YtbWwClXvumL", "2mbdpLcDqFsA5efI0LJn5i", "0Cr1H8kCXN5qBAQCHYtVGu",
     "6qxFruTA3sBLF29FXLR6LW", "7iocNjLrxPHLl8njgRlv5U", #"4cKmnSLAhwxaWKXQhfz5Ju"
 ]
-paintings = read_db("painting-db.csv")
+paintings = read_db("../analysis/k_means_clustered.csv")
 
 @app.route("/")
 def hello():   
