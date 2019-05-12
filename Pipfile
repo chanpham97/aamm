@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+"autopep8" = "*"
+
+[packages]
+requests = "*"
+flask = "*"
+opencv-python = "*"
+spotipy = "*"
+scipy = "*"
+
+[requires]
+python_version = "2.7"
