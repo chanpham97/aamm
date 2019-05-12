@@ -1,72 +1,67 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort
 import random
+import csv
 import sys
-sys.path.insert(0, "../analysis/")
-from musicArtMatcher import MusicArtMatcher 
-import config
+# sys.path.insert(0, "../analysis/")
+# from musicArtMatcher import MusicArtMatcher 
+# import config
 
 app = Flask(__name__)
 
-painting_index = 0
-paintings_order = ["1.jpg",  "10.jpg", "9.jpg", "4.jpg", "6.jpg", "7.jpg", "13.jpg", "11.jpg", "5.jpg", "12.jpg",  "2.jpg", "8.jpg"]
-paintings_dict = {
-        # "0.jpg": ["Painting with red spot", "Wassily Kandinsky", "1914"], # mismatch?
-        "1.jpg": ["Lausanne Abstract", "Francis Picabia", "1918"],
-        "2.jpg": ["Glass Painting with the Sun (Small Pleasures)", "Wassily Kandinsky", "1910"],
-        # "3.jpg": ["Spring", "David Burliuk", "1907"], # repetitive
-        "4.jpg": ["The Mahatmas Present Standing Point, Series II, No. 2a", "Hilma af Klint", "1920"],
-        "5.jpg": ["Landscape", "Arthur Beecher Carles", "1910"],
-        "6.jpg": ["Abstract Painting", "Vanessa Bell", "1914"], #note similarity
-        "7.jpg": ["The Yellow Curtain", "Henri Matisse", "1915"],
-        "8.jpg": ["Variation", "Alexej von Jawlensky", "1918"],
-        "9.jpg": ["Planar Relation", "Willi Baumeister", "1920"],
-        "10.jpg": ["With full force", "Lyubov Popova", ""],
-        # "12.jpg": ["Eroun", "Wolfgang Paalen", "1944"],
-        "11.jpg": ["1949-A-No.1", "Clyfford Still", "1949"],
-        "12.jpg": ["The Air", "Joan Miro", "1937"],
-        "13.jpg": ["Bos", "Jacoba van Heemskerck", "1912"]
-}
 
+def read_db(db_name):
+    with open(db_name, mode="r") as in_csv:
+        reader = csv.DictReader(in_csv)
+        paintings = []
+        for row in reader:
+            paintings.append(row)
+    return paintings
+
+
+def get_painting(paintings):
+    index = random.randint(0, len(paintings)-1)
+    print index
+    painting = paintings[index]
+    title = painting["title"].decode('utf-8')
+    artist = painting["artistName"].decode('utf-8')
+    url = painting["image"].decode('utf-8')
+    
+    track_id = '52lJakcAPTde2UnuvEqFaK'
+    track = "https://open.spotify.com/embed/track/" + track_id
+    return index, title, artist, url, track
+
+
+view_history = []
 tracks_list = [
     "52lJakcAPTde2UnuvEqFaK", "0PfQd8JoZTLC7QmuSALrnH", "1LqFdwLKqa8Ep6q9LEUCih", "2Yb67ozAhETHhy5i5eIDI1",
     "6cPbVV2I3AjhSHxB5J4Ozd", "0nF5aQoLs2YtbWwClXvumL", "2mbdpLcDqFsA5efI0LJn5i", "0Cr1H8kCXN5qBAQCHYtVGu",
     "6qxFruTA3sBLF29FXLR6LW", "7iocNjLrxPHLl8njgRlv5U", #"4cKmnSLAhwxaWKXQhfz5Ju"
 ]
-
-def get_dependencies():
-    # painting, painting_info = random.choice(list(paintings_dict.items()))
-    painting = paintings_order[painting_index]
-    painting_info = paintings_dict[painting]
-    matcher = MusicArtMatcher(config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, 100)
-    track_id = matcher.match('../app/static/images/', painting, tracks_list)
-    print(track_id)
-    
-    track = "https://open.spotify.com/embed/track/" + track_id
-    return painting, painting_info, track
+paintings = read_db("painting-db.csv")
 
 @app.route("/")
 def hello():   
-    global painting_index
-    painting_index = 0
-    painting, painting_info, track = get_dependencies() 
-    print painting_index
-    return render_template('index.html', painting_path="/static/images/" + painting, title=painting_info[0], artist=painting_info[1], track_url=track)
+    global view_history
+    global paintings
+    
+    index, title, artist, url, track = get_painting(paintings)
+    view_history.append(index)
+    print view_history
+    return render_template('index.html', painting_path=url, title=title, artist=artist, track_url=track)
  
-@app.route("/prev")
-def previous():
-    global painting_index
-    painting_index = (painting_index - 1) % len(paintings_dict.keys())
-    print painting_index
-    painting, painting_info, track = get_dependencies() 
-    return render_template('index.html', painting_path="/static/images/" + painting, title=painting_info[0], artist=painting_info[1], track_url=track)
+# @app.route("/prev")
+# def previous():
+#     print painting_index
+#     painting, painting_info, track = get_dependencies() 
+#     return render_template('index.html', painting_path="/static/images/" + painting, title=painting_info[0], artist=painting_info[1], track_url=track)
 
-@app.route("/next")
-def next():
-    global painting_index
-    painting_index = (painting_index + 1) % len(paintings_dict.keys())
-    print painting_index
-    painting, painting_info, track = get_dependencies() 
-    return render_template('index.html', painting_path="/static/images/" + painting, title=painting_info[0], artist=painting_info[1], track_url=track)
+# @app.route("/next")
+# def next():
+#     global painting_index
+#     painting_index = (painting_index + 1) % len(paintings_dict.keys())
+#     print painting_index
+#     painting, painting_info, track = get_dependencies() 
+#     return render_template('index.html', painting_path="/static/images/" + painting, title=painting_info[0], artist=painting_info[1], track_url=track)
 
 
 if __name__ == "__main__":
