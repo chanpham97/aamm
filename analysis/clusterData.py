@@ -23,13 +23,18 @@ import pandas as pd
 art_info = []
 data = []
 
-for_clustering_csv = "for_clustering.csv"
+#for_clustering_csv = "for_clustering.csv"
+for_clustering_csv = "painting-db.csv"
 df = pd.read_csv(for_clustering_csv)
+df = df.fillna(0.0)
 
 for index, row in df.iterrows():
-    #print(row)
     art_info.append([row["title"], row["artistName"], row["yearAsString"], row["genre"], row["image"]])
-    data.append([row["f1"], row["f2"], row["f3"], row["f4"], row["f5"], row["f6"], row["f7"], row["f8"], row["f9"]])
+    
+    data.append([row["brightness"], row["blockCount"], row["colorCount"], 
+                 row["pink"], row["brown"], row["yellow"], row["blue"], row["gray"], row["purple"], row["black"], row["orange"], row["green"], row["white"], row["red"], 
+                 row["mean_b_gradients_horiz"], row["mean_g_gradients_horiz"], row["mean_r_gradients_horiz"], row["mean_b_gradients_vert"], row["mean_g_gradients_vert"], row["mean_r_gradients_vert"] 
+                 ])
 
 k=20
 kmeans = KMeans(n_clusters=k, random_state=0).fit(data)
@@ -51,9 +56,17 @@ for i in range(n):
     #print(len(art_info[i]))
     rows.append(art_info[i])
     #print()
-
+    
 #Convert list of tuples to dataframe and set column names and indexes
-dfObj = pd.DataFrame(rows, columns = ['title' , 'artistName', 'yearAsString', 'genre', 'image', 'f1','f2','f3','f4','f5','f6','f7','f8','f9', 'label']) 
+dfObj = pd.DataFrame(rows, columns = ['title' , 'artistName', 'yearAsString', 'genre', 'image',
+                                      'brightness','blockCount','colorCount',
+                                      'pink','brown','yellow','blue','gray','purple', 'black', 'orange', 'green', 'white', 'red', 
+                                      'mean_b_gradients_horiz', 'mean_g_gradients_horiz', 'mean_r_gradients_horiz', 'mean_b_gradients_vert', 'mean_g_gradients_vert', 'mean_r_gradients_vert',
+                                      'label'
+                                      ]) 
+
+print("MADE IT")
+
 print(dfObj.head(5))
 
 output_filename = "k_means_clustered.csv"
