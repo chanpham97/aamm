@@ -2,23 +2,29 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 import random
 import csv
 import sys
-# sys.path.insert(0, "../analysis/")
-# from musicArtMatcher import MusicArtMatcher 
-# import config
 
 app = Flask(__name__)
 
 
-def read_db(db_name):
-    with open(db_name, mode="r") as in_csv:
+def read_db(db_name, pairings):
+    with open(db_name, "r") as in_csv:
         reader = csv.DictReader(in_csv)
         paintings = []
         for row in reader:
             paintings.append(row)
-    return paintings
+    
+    with open(pairings, "r") as in_csv:
+        reader = csv.DictReader(in_csv)
+        pairings = {}
+        for row in reader:
+            pairings[row["label"]] = row["track"]
+
+    return paintings, pairings
 
 
 def get_painting(paintings):
+    global pairings
+
     index = random.randint(0, len(paintings)-1)
     painting = paintings[index]
     title = painting["title"].decode('utf-8')
@@ -27,42 +33,50 @@ def get_painting(paintings):
     label = painting["label"]
     print index, label
 
-    track_id = '52lJakcAPTde2UnuvEqFaK'
-    track = "https://open.spotify.com/embed/track/" + track_id
+    track = "https://open.spotify.com/embed/track/" + pairings[label]
     return index, title, artist, url, track
 
 
-view_history = []
-tracks_list = [
-    "52lJakcAPTde2UnuvEqFaK", "0PfQd8JoZTLC7QmuSALrnH", "1LqFdwLKqa8Ep6q9LEUCih", "2Yb67ozAhETHhy5i5eIDI1",
-    "6cPbVV2I3AjhSHxB5J4Ozd", "0nF5aQoLs2YtbWwClXvumL", "2mbdpLcDqFsA5efI0LJn5i", "0Cr1H8kCXN5qBAQCHYtVGu",
-    "6qxFruTA3sBLF29FXLR6LW", "7iocNjLrxPHLl8njgRlv5U", #"4cKmnSLAhwxaWKXQhfz5Ju"
-]
-paintings = read_db("../analysis/k_means_clustered.csv")
+def write_feedback(file, rating):
+    global view_history
+    with open(file, "a+") as outfile:
+        writer = csv.DictWriter(outfile, fieldnames=["track", "rating"])
+        row = {"track": view_history[-1], "rating": rating}
+        writer.writerow(row)
 
-@app.route("/")
-def hello():   
+
+def load_page():
     global view_history
     global paintings
-    
+
     index, title, artist, url, track = get_painting(paintings)
     view_history.append(index)
     print view_history
     return render_template('index.html', painting_path=url, title=title, artist=artist, track_url=track)
- 
-# @app.route("/prev")
-# def previous():
-#     print painting_index
-#     painting, painting_info, track = get_dependencies() 
-#     return render_template('index.html', painting_path="/static/images/" + painting, title=painting_info[0], artist=painting_info[1], track_url=track)
 
-# @app.route("/next")
-# def next():
-#     global painting_index
-#     painting_index = (painting_index + 1) % len(paintings_dict.keys())
-#     print painting_index
-#     painting, painting_info, track = get_dependencies() 
-#     return render_template('index.html', painting_path="/static/images/" + painting, title=painting_info[0], artist=painting_info[1], track_url=track)
+view_history = []
+paintings, pairings = read_db("../analysis/k_means_clustered.csv", "../analysis/clusters_to_tid.csv")
+
+@app.route("/")
+def hello():   
+    return load_page()
+
+@app.route("/negative")
+def negative():
+    write_feedback("feedback.csv", -1)
+    return load_page()
+
+
+@app.route("/neutral")
+def neutral():   
+    write_feedback("feedback.csv", 0)
+    return load_page()
+
+
+@app.route("/positive")
+def positive():   
+    write_feedback("feedback.csv", 1)
+    return load_page()
 
 
 if __name__ == "__main__":

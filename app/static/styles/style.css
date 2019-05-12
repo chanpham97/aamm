@@ -13,7 +13,7 @@ body {
     align-items: center;
     width: 100vw;
     height:auto;
-    margin-top: 5vh;
+    margin-top: 0;
     margin-bottom: 5vh;
 }
 
@@ -37,6 +37,7 @@ body {
     align-items: center;
     width: 100vw;
     height:auto;
+    margin-top: 5vh;
 }
 
 .card {
