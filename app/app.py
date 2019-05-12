@@ -2,6 +2,8 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 import random
 import csv
 import sys
+import os, os.path
+
 
 app = Flask(__name__)
 
@@ -10,8 +12,15 @@ def read_db(db_name, pairings):
     with open(db_name, "r") as in_csv:
         reader = csv.DictReader(in_csv)
         paintings = []
+        curr_index = 0
+        cluster_dict = {}
         for row in reader:
             paintings.append(row)
+            if row["label"] not in cluster_dict:
+                cluster_dict[row["label"]] = [curr_index]
+            else:
+                cluster_dict[row["label"]].append(curr_index)
+            curr_index = curr_index + 1
     
     with open(pairings, "r") as in_csv:
         reader = csv.DictReader(in_csv)
@@ -19,22 +28,25 @@ def read_db(db_name, pairings):
         for row in reader:
             pairings[row["label"]] = row["track"]
 
-    return paintings, pairings
+    return paintings, pairings, cluster_dict
 
 
-def get_painting(paintings):
+def get_painting():
+    global cluster_dict
+    global paintings
     global pairings
 
-    index = random.randint(0, len(paintings)-1)
-    painting = paintings[index]
+    cluster_index = str(random.randint(0, len(cluster_dict)-1))
+    painting_index = random.choice(cluster_dict[cluster_index])
+    painting = paintings[painting_index]
     title = painting["title"].decode('utf-8')
     artist = painting["artistName"].decode('utf-8')
     url = painting["image"].decode('utf-8')
     label = painting["label"]
-    print index, label
+    print painting_index, label
 
     track = "https://open.spotify.com/embed/track/" + pairings[label]
-    return index, title, artist, url, track
+    return painting_index, title, artist, url, track
 
 
 def write_feedback(file, rating):
@@ -47,15 +59,15 @@ def write_feedback(file, rating):
 
 def load_page():
     global view_history
-    global paintings
 
-    index, title, artist, url, track = get_painting(paintings)
+    index, title, artist, url, track = get_painting()
     view_history.append(index)
     print view_history
     return render_template('index.html', painting_path=url, title=title, artist=artist, track_url=track)
 
+
 view_history = []
-paintings, pairings = read_db("../analysis/k_means_clustered.csv", "../analysis/clusters_to_tid.csv")
+paintings, pairings, cluster_dict = read_db("../analysis/k_means_clustered.csv", "../analysis/clusters_to_tid.csv")
 
 @app.route("/")
 def hello():   
