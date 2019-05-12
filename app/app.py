@@ -43,9 +43,9 @@ def get_painting():
     artist = painting["artistName"].decode('utf-8')
     url = painting["image"].decode('utf-8')
     label = painting["label"]
-    print painting_index, label
 
     track = "https://open.spotify.com/embed/track/" + pairings[label]
+    print painting_index, label, track
     return painting_index, title, artist, url, track
 
 
@@ -92,4 +92,4 @@ def positive():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0")
