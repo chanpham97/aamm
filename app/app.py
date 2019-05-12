@@ -67,7 +67,7 @@ def load_page():
 
 
 view_history = []
-paintings, pairings, cluster_dict = read_db("../analysis/k_means_clustered.csv", "../analysis/clusters_to_tid.csv")
+paintings, pairings, cluster_dict = read_db("../analysis/final_database.csv", "../analysis/clusters_to_tid.csv")
 
 @app.route("/")
 def hello():   
