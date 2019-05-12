@@ -48,5 +48,3 @@ for index, row in df.iterrows():
     req.urlretrieve(imgurl, "clusters/"+str(row["label"])+"/"+filename)
 
 print("Download finished.")
-    
-    
