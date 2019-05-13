@@ -62,18 +62,25 @@ print("*************************************")
 print()
 
 print("Total", ": ", total_counts)
-total_counts_percent_list = [(i, total_counts[i] / len(list(df_new["grade"]))) for i in total_counts]
-print("In percentage:")
+total_counts_percent_list = [(i, round( (total_counts[i] / len(list(df_new["grade"]))), 2)) for i in total_counts]
+print("In percentage", ": ", total_counts_percent_list)
 print(total_counts_percent_list)
 print()
 
 for key in sorted(dic.keys()):
     cluster_counts = Counter(dic[key])
     print("Cluster ", key, ": ", cluster_counts)
-    cluster_counts_percent_list = [(i, cluster_counts[i] / len(dic[key])) for i in cluster_counts]
-    print("In percentage:")
-    print(cluster_counts_percent_list)
-    print()
+    #cluster_counts_percent_list = [(i, cluster_counts[i] / len(dic[key])) for i in cluster_counts]
+    #print("In percentage:")
+    #print(cluster_counts_percent_list)
+    #print()
+print()
+for key in sorted(dic.keys()):
+    cluster_counts = Counter(dic[key])
+    #print("Cluster ", key, ": ", cluster_counts)
+    cluster_counts_percent_list = [(i, round( (cluster_counts[i] / len(dic[key])), 2)) for i in cluster_counts]
+    print("Cluster ", key, ": ", cluster_counts_percent_list)
+    #print()
 
 print()    
 print("*************************************")
