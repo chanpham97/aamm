@@ -64,7 +64,6 @@ print()
 print("Total", ": ", total_counts)
 total_counts_percent_list = [(i, round( (total_counts[i] / len(list(df_new["grade"]))), 2)) for i in total_counts]
 print("In percentage", ": ", total_counts_percent_list)
-print(total_counts_percent_list)
 print()
 
 for key in sorted(dic.keys()):
