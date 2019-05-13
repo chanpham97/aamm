@@ -89,7 +89,7 @@ class ColorAnalysis:
         mean_gradients["mean_g_gradients_vert"] = mean(g_gradients_vert)
         mean_gradients["mean_r_gradients_vert"] = mean(r_gradients_vert)
         
-        print(mean_gradients)
+        #print(mean_gradients)
 
         return mean_gradients
 
@@ -337,4 +337,4 @@ def main():
 #    print(get_scaled_values(img_bgr))
 
 
-main()
+#main()

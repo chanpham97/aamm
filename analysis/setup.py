@@ -73,7 +73,7 @@ def fill_vectors(infile, outfile):
 
         for row in reader:
             path = "paintings/" + row["title"] + ".jpg"
-            print path
+            print(path)
 
             if "" not in [val for key, val in row.items() if key in get_features(a)]:
                 # print "vector already set"
@@ -113,5 +113,5 @@ def download_image(url, path):
 
 
 # add_artist(sys.argv[1], sys.argv[2])
-fill_vectors(sys.argv[1], sys.argv[2])
+#fill_vectors(sys.argv[1], sys.argv[2])
 
