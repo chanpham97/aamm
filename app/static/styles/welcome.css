@@ -1,0 +1,18 @@
+body {
+    background: #343A40;
+}
+
+#welcome {
+    display:flex;
+    color: #f1f1f1;
+    justify-content: center;
+    align-items: center;
+    margin-top: 35vh;
+}
+
+#button-wrapper {
+    margin-top: 2vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

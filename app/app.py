@@ -3,7 +3,8 @@ import random
 import csv
 import sys
 import os, os.path
-
+sys.path.insert(0, '../analysis/')
+from generate_prediction import get_prediction_for_image 
 
 app = Flask(__name__)
 
@@ -63,7 +64,7 @@ def load_page():
     index, title, artist, url, track = get_painting()
     view_history.append(index)
     print view_history
-    return render_template('index.html', painting_path=url, title=title, artist=artist, track_url=track)
+    return render_template('painting.html', painting_path=url, title=title, artist=artist, track_url=track)
 
 
 view_history = []
@@ -71,6 +72,10 @@ paintings, pairings, cluster_dict = read_db("../analysis/final_database.csv", ".
 
 @app.route("/")
 def hello():   
+    return render_template('index.html')
+
+@app.route("/random")
+def painting():   
     return load_page()
 
 @app.route("/negative")
@@ -89,6 +94,22 @@ def neutral():
 def positive():   
     write_feedback("feedback.csv", 1)
     return load_page()
+
+@app.route("/upload")
+def upload_page():
+    return render_template('upload.html')
+
+
+@app.route("/upload-action", methods=["POST"])
+def process_upload():
+    global pairings
+
+    print request.files
+    file = request.files["pic"]
+    file.save('static/images/tmp.jpg')
+    label = str(get_prediction_for_image('static/images/tmp.jpg'))
+    track = "https://open.spotify.com/embed/track/" + pairings[label]
+    return render_template('upload_complete.html', track_url=track)    
 
 
 if __name__ == "__main__":

@@ -12,6 +12,7 @@ flask = "*"
 opencv-python = "*"
 spotipy = "*"
 scipy = "*"
+sklearn = "*"
 
 [requires]
 python_version = "2.7"

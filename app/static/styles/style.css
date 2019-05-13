@@ -1,12 +1,32 @@
 body {
     font-family: Helvetica Neue; 
     width: 100%;
+    
 }
 
 .img-wrapper {
     position: relative
 }
+#up-wrapper {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height:auto;
+    margin-top: 5vh;
+}
 
+#caption-wrapper {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 35vh;
+}
+#form-wrapper {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
 #wrapper {
     display:flex;
     justify-content: center;
@@ -16,6 +36,7 @@ body {
     margin-top: 0;
     margin-bottom: 5vh;
 }
+
 
 .card-img-overlay {
     display: none;
@@ -51,8 +72,8 @@ body {
 
   
 img {
-    width: 100%;
-    height: auto;
+    max-width: 100%;
+    max-height: 50vh;
 }
 
 

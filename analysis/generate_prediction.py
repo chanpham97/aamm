@@ -42,5 +42,5 @@ def get_prediction_for_image(image_path):
         
     return knn.predict([list_to_predict])[0]
 
-print(get_prediction_for_image("Kandinsky_Wassily.Landscape_with_red_spots.1913.jpg"))
+# print(get_prediction_for_image("Kandinsky_Wassily.Landscape_with_red_spots.1913.jpg"))
 
